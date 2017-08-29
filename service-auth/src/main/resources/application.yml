@@ -1,10 +1,17 @@
 spring:
   application:
     name: service-auth
-
+  cloud:
+    config:
+      label: master
+      profile: default
+      discovery:
+        enabled: true
+        service-id: config-server
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:1001/eureka/
+
 server:
   port: 3000
