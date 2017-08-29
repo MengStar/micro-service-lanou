@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/MengStar/micro-sevice-lanou
+          search-paths: config-repo
+          username: 641510128@qq.com
+          password: sw2011prJ
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:1001/eureka/
+
+server:
+  port: 1100
