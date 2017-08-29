@@ -1,2 +1,1 @@
-return:
-  string: !Hi!
+returnStr: !hi
