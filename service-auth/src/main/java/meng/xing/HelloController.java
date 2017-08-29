@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RefreshScope
 public class HelloController {
-    @Value("${returnString}")
+    @Value("${return.string}")
     private String ret;
 
     @GetMapping("/hello")
