@@ -28,6 +28,15 @@ public class DefaultUser implements UserService {
     UserRoleRepository userRoleRepository;
 
     @Override
+    public User register(User userToAdd) {
+        final String username = userToAdd.getUsername();
+        if (userRepository.findByUsername(username) != null) {
+            return null;
+        }
+        return userRepository.save(userToAdd);
+    }
+
+    @Override
     public User findUserByUsername(String username) {
         return userRepository.findByUsername(username);
 

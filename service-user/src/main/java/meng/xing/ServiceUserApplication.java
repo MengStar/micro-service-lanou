@@ -1,5 +1,6 @@
 package meng.xing;
 
+import meng.xing.entity.User;
 import meng.xing.entity.UserRole;
 import meng.xing.repository.UserRoleRepository;
 import meng.xing.service.UserService;
@@ -25,9 +26,9 @@ public class ServiceUserApplication {
 @Component
 class DatabaseLoader implements CommandLineRunner {
 
-    @Value("${username}")
+    @Value("${developUser}.${username}")
     private String username;
-    @Value("${password}")
+    @Value("${developUser}.${password}")
     private String password;
     @Value("${userRoleList}")
     private String[] userRoleList;
@@ -39,10 +40,15 @@ class DatabaseLoader implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
+        //初始化权限表
         if (userRoleRepository.count() != 0)
             return;
         for (String anUserRoleList : userRoleList) {
             userRoleRepository.save(new UserRole(anUserRoleList));
         }
+        //新增开发用户
+        User testUser = new User(username, password, "萌萌", "13086695953", "6415@qq.com", "四川省 成都市 郫县", true, 18);
+        userService.register(testUser);
+        userService.setUserRoles(username,userRoleList);
     }
 }
