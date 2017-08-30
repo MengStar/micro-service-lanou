@@ -11,7 +11,16 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -26,9 +35,9 @@ public class ServiceUserApplication {
 @Component
 class DatabaseLoader implements CommandLineRunner {
 
-    @Value("${developUser}.${username}")
+    @Value("${developUser.username}")
     private String username;
-    @Value("${developUser}.${password}")
+    @Value("${developUser.password}")
     private String password;
     @Value("${userRoleList}")
     private String[] userRoleList;
@@ -49,6 +58,33 @@ class DatabaseLoader implements CommandLineRunner {
         //新增开发用户
         User testUser = new User(username, password, "萌萌", "13086695953", "6415@qq.com", "四川省 成都市 郫县", true, 18);
         userService.register(testUser);
-        userService.setUserRoles(username,userRoleList);
+        userService.setUserRoles(username, userRoleList);
     }
+
 }
+@Configuration
+@EnableSwagger2
+ class Swagger2 {
+
+    @Bean
+    public Docket createRestApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("meng.xing.controller"))
+                .paths(PathSelectors.any())
+                .build();
+    }
+
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                .title("service-user APIs")
+                .description("service-user微服务api文档")
+                .termsOfServiceUrl("https://github.com/MengStar/micro-sevice-lanou/")
+                .contact("刘星")
+                .version("0.0.1-SNAPSHOT")
+                .build();
+    }
+
+}
+
