@@ -41,8 +41,7 @@ public class User {
     @NotNull
     private String phone;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_and_role", inverseJoinColumns = @JoinColumn(name = "role_id"), joinColumns = @JoinColumn(name = "user_id"))
+    @OneToMany(fetch = FetchType.EAGER)
     private Set<UserRole> roles;
 
     protected User() {
@@ -116,8 +115,6 @@ public class User {
     public void setRoles(Set<UserRole> roles) {
         this.roles = roles;
     }
-
-
 
 
     public String getNickName() {
