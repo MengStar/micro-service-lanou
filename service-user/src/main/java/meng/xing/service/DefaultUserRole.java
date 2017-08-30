@@ -12,6 +12,7 @@ import java.util.List;
 public class DefaultUserRole implements UserRoleService {
     @Autowired
     UserRoleRepository userRoleRepository;
+
     @Override
     @Cacheable(value = "AllRoles") //可以缓存
     public List<UserRole> findALlRoles() {
