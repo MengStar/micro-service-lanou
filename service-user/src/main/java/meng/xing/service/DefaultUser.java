@@ -58,20 +58,6 @@ public class DefaultUser implements UserService {
 
     @Override
     @Transactional
-    public boolean setUserRoles(String username, String... roles) {
-
-        logger.info("first roles: " + roles[0]);
-        Set<UserRole> _roles = new HashSet<>();
-        for (String role : roles) {
-            _roles.add(userRoleService.findUserRoleByRole(role));
-        }
-        User user = userRepository.findByUsername(username);
-        user.setRoles(_roles);
-        return userRepository.save(user) != null;
-    }
-
-    @Override
-    @Transactional
     public boolean updateUser(User user) {
         return userRepository.save(user) != null;
     }

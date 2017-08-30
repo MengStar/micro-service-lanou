@@ -16,14 +16,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * API文档地址： http://localhost:3000/swagger-ui.html
+ * 端口为该服务所在端口
+ */
 @RefreshScope
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    final UserService userService;
-    final UserRoleService userRoleService;
+    private final UserService userService;
+    private final UserRoleService userRoleService;
     @Value("${defaultUserRole}")
-    String defaultUserRole;
+    private List<String> defaultUserRole;
 
     @Autowired
     public UserController(UserService userService, UserRoleService userRoleService) {
@@ -45,72 +49,96 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Map<String, Object> registerUser(@RequestBody RequestUser requestUser) {
+    public ResponseStatus registerUser(@RequestBody RequestUser requestUser) {
 
-        Map<String, Object> response = new HashMap<>();
+        ResponseStatus response = new ResponseStatus();
         String username = requestUser.getUsername();
         //用户名存在
         if (userService.findUserByUsername(username) != null) {
-            response.put("message", "用户名已经存在");
-            response.put("status", false);
+            response.setMessage("用户名已经存在");
+            response.setSuccess("false");
             return response;
         }
-        userService.register(new User(requestUser.getUsername(), requestUser.getPassword(),
+        User user = new User(requestUser.getUsername(), requestUser.getPassword(),
                 requestUser.getNickName(), requestUser.getPhone(), requestUser.getEmail(),
-                requestUser.getAddress(), requestUser.isFemale(), requestUser.getAge()));
+                requestUser.getAddress(), requestUser.isFemale(), requestUser.getAge());
+        Set<UserRole> _roles = new HashSet<>();
+        defaultUserRole.forEach(
+                (role) -> _roles.add(userRoleService.findUserRoleByRole(role)));
+        user.setRoles(_roles);
+        userService.register(user);
 
-        userService.setUserRoles(username, defaultUserRole);
-        response.put("message", "用户注册成功");
-        response.put("status", true);
+        response.setMessage("用户注册成功");
+        response.setSuccess("true");
         return response;
+
     }
 
     @GetMapping("/{username}")
-    public Map<String, Object> getUserByUsername(@PathVariable("username") String username) {
+    public ResponseUserData getUserByUsername(@PathVariable("username") String username) {
+        ResponseUserData responseUserData = new ResponseUserData();
+        _ResponseUser _responseUser = new _ResponseUser();
         User _user = userService.findUserByUsername(username);
-        Map<String, Object> user = new HashMap<>();
-        user.put("id", _user.getId());
-        user.put("username", _user.getUsername());
+
+        _responseUser.setId(_user.getId().toString());
+        _responseUser.setUsername(_user.getUsername());
+
         Map<String, Object> permissions = new HashMap<>();
-        permissions.put("roles", _user.getRoles().stream().map(userRole -> userRole.getRole()).collect(Collectors.toList()));
-        //todo这是控制菜单的路径，有时间移动后台
-        permissions.put("visit", "1,3,4,5");
-        user.put("permissions", permissions);
-        Map<String, Object> data = new HashMap<>();
-        data.put("user", user);
-        return data;
+        permissions.put("roles", _user.getRoles().stream().map(UserRole::getRole).collect(Collectors.toList()));
+        permissions.put("visit", "1,3,4,5");//todo这是控制菜单的路径，有时间移动后台
+
+        _responseUser.setPermissions(permissions);
+        responseUserData.setUser(_responseUser);
+
+        return responseUserData;
     }
 
     @PatchMapping("/{id}")
-    public boolean updateUserById(@PathVariable("id") Long id, @RequestBody Map<String, Object> map) {
-
+    public ResponseStatus updateUserById(@PathVariable("id") Long id, @RequestBody RequestUser requestUser) {
+        ResponseStatus responseStatus = new ResponseStatus();
         User user = userService.findUserById(id);
 
-        ArrayList roles = (ArrayList) map.get("roles");
+        List<String> roles = requestUser.getRoles();
         if (roles != null) {
             Set<UserRole> _roles = new HashSet<>();
             roles.forEach(
-                    (role) -> _roles.add(userRoleService.findUserRoleByRole((String) role)));
+                    (role) -> _roles.add(userRoleService.findUserRoleByRole(role)));
             user.setRoles(_roles);
         }
 
-        user.setNickName(map.get("nickName").toString());
-        user.setFemale((boolean) map.get("female"));
-        user.setAge((int) map.get("age"));
-        user.setAddress(map.get("address").toString());
-        user.setEmail(map.get("email").toString());
-        user.setPhone(map.get("phone").toString());
-        return userService.updateUser(user);
+        user.setNickName(requestUser.getNickName());
+        user.setFemale(requestUser.isFemale());
+        user.setAge(requestUser.getAge());
+        user.setAddress(requestUser.getAddress());
+        user.setEmail(requestUser.getEmail());
+        user.setPhone(requestUser.getPhone());
+
+        if (userService.updateUser(user)) {
+            responseStatus.setSuccess("true");
+            responseStatus.setMessage("用户更新成功");
+            return responseStatus;
+        }
+        responseStatus.setSuccess("false");
+        responseStatus.setMessage("用户更新失败");
+        return responseStatus;
     }
 
     @DeleteMapping("/{id}")
-    public boolean deleteUserById(@PathVariable("id") Long id) {
-        return userService.deleteUserById(id);
+    public ResponseStatus deleteUserById(@PathVariable("id") Long id) {
+        ResponseStatus responseStatus = new ResponseStatus();
+        if (userService.deleteUserById(id)) {
+            responseStatus.setSuccess("true");
+            responseStatus.setMessage("用户更新成功");
+            return responseStatus;
+        }
+        responseStatus.setSuccess("false");
+        responseStatus.setMessage("用户更新失败");
+        return responseStatus;
     }
 
     @DeleteMapping
-    public void deleteUsers(@RequestBody Map<String, ArrayList<Long>> map) {
-        map.get("ids").forEach(id -> userService.deleteUserById(id));
+    public void deleteUsers(@RequestBody RequestIds ids) {
+        ids.getIds().forEach(userService::deleteUserById);
     }
 }
 
@@ -123,12 +151,21 @@ class RequestUser {
     private String address;
     private boolean female;
     private int age;
+    private List<String> roles;
+
+    List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
 
     protected RequestUser() {
 
     }
 
-    public String getUsername() {
+    String getUsername() {
         return username;
     }
 
@@ -136,7 +173,7 @@ class RequestUser {
         this.username = username;
     }
 
-    public String getPassword() {
+    String getPassword() {
         return password;
     }
 
@@ -144,7 +181,7 @@ class RequestUser {
         this.password = password;
     }
 
-    public String getNickName() {
+    String getNickName() {
         return nickName;
     }
 
@@ -152,7 +189,7 @@ class RequestUser {
         this.nickName = nickName;
     }
 
-    public String getPhone() {
+    String getPhone() {
         return phone;
     }
 
@@ -160,7 +197,7 @@ class RequestUser {
         this.phone = phone;
     }
 
-    public String getEmail() {
+    String getEmail() {
         return email;
     }
 
@@ -168,7 +205,7 @@ class RequestUser {
         this.email = email;
     }
 
-    public String getAddress() {
+    String getAddress() {
         return address;
     }
 
@@ -176,7 +213,7 @@ class RequestUser {
         this.address = address;
     }
 
-    public boolean isFemale() {
+    boolean isFemale() {
         return female;
     }
 
@@ -184,7 +221,7 @@ class RequestUser {
         this.female = female;
     }
 
-    public int getAge() {
+    int getAge() {
         return age;
     }
 
@@ -192,5 +229,91 @@ class RequestUser {
         this.age = age;
     }
 
+}
 
+class RequestIds {
+    private List<Long> ids;
+
+    public RequestIds() {
+    }
+
+    List<Long> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<Long> ids) {
+        this.ids = ids;
+    }
+}
+
+class ResponseStatus {
+    private String success;
+    private String message;
+
+    public ResponseStatus() {
+    }
+
+    public String getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(String success) {
+        this.success = success;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+}
+
+class ResponseUserData {
+    private _ResponseUser user;
+
+    public ResponseUserData() {
+    }
+
+    public _ResponseUser getUser() {
+        return user;
+    }
+
+    void setUser(_ResponseUser user) {
+        this.user = user;
+    }
+}
+
+class _ResponseUser {
+    private String id;
+    private String username;
+    private Map<String, Object> permissions;
+
+    _ResponseUser() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Map<String, Object> getPermissions() {
+        return permissions;
+    }
+
+    void setPermissions(Map<String, Object> permissions) {
+        this.permissions = permissions;
+    }
 }

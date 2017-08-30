@@ -3,6 +3,7 @@ package meng.xing;
 import meng.xing.entity.User;
 import meng.xing.entity.UserRole;
 import meng.xing.repository.UserRoleRepository;
+import meng.xing.service.UserRoleService;
 import meng.xing.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,10 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @SpringBootApplication
 @EnableDiscoveryClient
 public class ServiceUserApplication {
@@ -40,15 +45,17 @@ class DatabaseLoader implements CommandLineRunner {
     @Value("${developUser.password}")
     private String password;
     @Value("${userRoleList}")
-    private String[] userRoleList;
+    private List<String> userRoleList;
 
     final UserService userService;
     final UserRoleRepository userRoleRepository;
+    final UserRoleService userRoleService;
 
     @Autowired
-    public DatabaseLoader(UserService userService, UserRoleRepository userRoleRepository) {
+    public DatabaseLoader(UserService userService, UserRoleRepository userRoleRepository, UserRoleService userRoleService) {
         this.userService = userService;
         this.userRoleRepository = userRoleRepository;
+        this.userRoleService = userRoleService;
     }
 
     @Override
@@ -61,8 +68,12 @@ class DatabaseLoader implements CommandLineRunner {
         }
         //新增开发用户
         User testUser = new User(username, password, "萌萌", "13086695953", "6415@qq.com", "四川省 成都市 郫县", true, 18);
+        List<String> roles = userRoleList;
+        Set<UserRole> _roles = new HashSet<>();
+        roles.forEach(
+                (role) -> _roles.add(userRoleService.findUserRoleByRole(role)));
+        testUser.setRoles(_roles);
         userService.register(testUser);
-        userService.setUserRoles(username, userRoleList);
     }
 
 }
