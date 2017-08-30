@@ -20,7 +20,7 @@ public class UserRoleController {
     }
 
     @GetMapping
-    public List<UserRole> findAllRole() {
+    public List<UserRole> getUserRoles() {
         return userRoleService.findALlRoles();
     }
 }
