@@ -22,10 +22,14 @@ import java.util.Set;
 @Service
 public class DefaultUser implements UserService {
     private final Logger logger = LoggerFactory.getLogger(DefaultUser.class);
+    final UserRepository userRepository;
+    final UserRoleService userRoleService;
+
     @Autowired
-    UserRepository userRepository;
-    @Autowired
-    UserRoleRepository userRoleRepository;
+    public DefaultUser(UserRoleService userRoleService, UserRepository userRepository) {
+        this.userRoleService = userRoleService;
+        this.userRepository = userRepository;
+    }
 
     @Override
     public User register(User userToAdd) {
@@ -56,12 +60,12 @@ public class DefaultUser implements UserService {
     @Transactional
     public boolean setUserRoles(String username, String... roles) {
 
+        logger.info("first roles: " + roles[0]);
         Set<UserRole> _roles = new HashSet<>();
-        for (int i = 0; i < roles.length; i++) {
-            _roles.add(userRoleRepository.findByRole(roles[i]));
+        for (String role : roles) {
+            _roles.add(userRoleService.findUserRoleByRole(role));
         }
         User user = userRepository.findByUsername(username);
-        logger.info(_roles.toString());
         user.setRoles(_roles);
         return userRepository.save(user) != null;
     }
@@ -69,9 +73,7 @@ public class DefaultUser implements UserService {
     @Override
     @Transactional
     public boolean updateUser(User user) {
-        if (userRepository.save(user) != null)
-            return true;
-        else return false;
+        return userRepository.save(user) != null;
     }
 
     @Override

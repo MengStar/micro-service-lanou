@@ -12,10 +12,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/userRoles")
 public class UserRoleController {
+    final UserRoleService userRoleService;
+
     @Autowired
-    UserRoleService userRoleService;
+    public UserRoleController(UserRoleService userRoleService) {
+        this.userRoleService = userRoleService;
+    }
+
     @GetMapping
-    public List<UserRole> findAllRole(){
+    public List<UserRole> findAllRole() {
         return userRoleService.findALlRoles();
     }
 }

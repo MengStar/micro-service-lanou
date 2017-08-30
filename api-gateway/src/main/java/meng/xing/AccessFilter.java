@@ -47,7 +47,7 @@ public class AccessFilter extends ZuulFilter {
             List<String> valueList = Arrays.asList(params.get(in));
             queryParams.put(in, valueList);
         }
-        queryParams.put("accessToken", Arrays.asList("11111111111"));
+        queryParams.put("accessToken", Collections.singletonList("11111111111"));
         ctx.setRequestQueryParams(queryParams);
         log.info("access token ok");
         return null;

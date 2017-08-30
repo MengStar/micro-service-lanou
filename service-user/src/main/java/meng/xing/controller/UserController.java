@@ -20,15 +20,20 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    @Autowired
-     UserService userService;
-    @Autowired
-    UserRoleService userRoleService;
-    @Value("$(defaultUserRole)")
+    final UserService userService;
+    final UserRoleService userRoleService;
+    @Value("${defaultUserRole}")
     String defaultUserRole;
+
+    @Autowired
+    public UserController(UserService userService, UserRoleService userRoleService) {
+        this.userService = userService;
+        this.userRoleService = userRoleService;
+    }
+
     @GetMapping
-    public Page<User> getUsers(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+    public Page<User> getUsers(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                               @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                                @RequestParam(value = "sort", defaultValue = "id") String sort,
                                @RequestParam(value = "order", defaultValue = "asc") String order,
                                @RequestParam(value = "username", required = false) String username) {
@@ -40,27 +45,21 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Map<String, Object> registerUser(@RequestBody Map<String, Object> request) {
+    public Map<String, Object> registerUser(@RequestBody RequestUser requestUser) {
 
         Map<String, Object> response = new HashMap<>();
-        String username = request.get("username").toString();
+        String username = requestUser.getUsername();
         //用户名存在
         if (userService.findUserByUsername(username) != null) {
             response.put("message", "用户名已经存在");
             response.put("status", false);
             return response;
         }
-        String password = request.get("password").toString();
-        String nickName = request.get("nickName").toString();
-        String phone = request.get("phone").toString();
-        String email = request.get("email").toString();
-        String address = request.get("address").toString();
-        boolean female = (boolean) request.get("female");
-        int age = (int) request.get("age");
-        User user = new User(username, password, nickName, phone, email, address, female, age);
-        userService.register(user);
-        userService.setUserRoles(username,defaultUserRole);
+        userService.register(new User(requestUser.getUsername(), requestUser.getPassword(),
+                requestUser.getNickName(), requestUser.getPhone(), requestUser.getEmail(),
+                requestUser.getAddress(), requestUser.isFemale(), requestUser.getAge()));
 
+        userService.setUserRoles(username, defaultUserRole);
         response.put("message", "用户注册成功");
         response.put("status", true);
         return response;
@@ -113,4 +112,85 @@ public class UserController {
     public void deleteUsers(@RequestBody Map<String, ArrayList<Long>> map) {
         map.get("ids").forEach(id -> userService.deleteUserById(id));
     }
+}
+
+class RequestUser {
+    private String username;
+    private String password;
+    private String nickName;
+    private String phone;
+    private String email;
+    private String address;
+    private boolean female;
+    private int age;
+
+    protected RequestUser() {
+
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public boolean isFemale() {
+        return female;
+    }
+
+    public void setFemale(boolean female) {
+        this.female = female;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+
 }

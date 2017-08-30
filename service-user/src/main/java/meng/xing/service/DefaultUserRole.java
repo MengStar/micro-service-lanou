@@ -10,8 +10,12 @@ import java.util.List;
 
 @Service
 public class DefaultUserRole implements UserRoleService {
+    final UserRoleRepository userRoleRepository;
+
     @Autowired
-    UserRoleRepository userRoleRepository;
+    public DefaultUserRole(UserRoleRepository userRoleRepository) {
+        this.userRoleRepository = userRoleRepository;
+    }
 
     @Override
     @Cacheable(value = "AllRoles") //可以缓存

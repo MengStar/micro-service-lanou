@@ -42,10 +42,14 @@ class DatabaseLoader implements CommandLineRunner {
     @Value("${userRoleList}")
     private String[] userRoleList;
 
+    final UserService userService;
+    final UserRoleRepository userRoleRepository;
+
     @Autowired
-    UserService userService;
-    @Autowired
-    UserRoleRepository userRoleRepository;
+    public DatabaseLoader(UserService userService, UserRoleRepository userRoleRepository) {
+        this.userService = userService;
+        this.userRoleRepository = userRoleRepository;
+    }
 
     @Override
     public void run(String... strings) throws Exception {
@@ -62,9 +66,10 @@ class DatabaseLoader implements CommandLineRunner {
     }
 
 }
+
 @Configuration
 @EnableSwagger2
- class Swagger2 {
+class Swagger2 {
 
     @Bean
     public Docket createRestApi() {

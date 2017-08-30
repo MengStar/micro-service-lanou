@@ -2,6 +2,7 @@ package meng.xing.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.NotFound;
 import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
@@ -41,7 +42,9 @@ public class User {
     @NotNull
     private String phone;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany
+    @NotFound
+    @JoinColumn(name = "roles")
     private Set<UserRole> roles;
 
     protected User() {
@@ -66,6 +69,7 @@ public class User {
         this.address = address;
         this.isFemale = isFemale;
         this.phone = phone;
+        this.roles = null;
     }
 
     public Long getId() {
