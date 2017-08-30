@@ -1,4 +1,4 @@
-package meng.xing;
+package meng.xing.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RefreshScope
-public class HelloController {
+public class UserController {
     @Value("${returnStr}")
     private String ret;
 
-    @GetMapping("/hello")
+    @GetMapping("/")
     public String hello() {
-        return "service-auth hello" + this.ret;
+        return "service-user " + this.ret;
     }
 }
