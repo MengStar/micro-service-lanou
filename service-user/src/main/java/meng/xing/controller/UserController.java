@@ -83,9 +83,9 @@ public class UserController {
         _responseUser.setId(_user.getId().toString());
         _responseUser.setUsername(_user.getUsername());
 
-        Map<String, Object> permissions = new HashMap<>();
-        permissions.put("roles", _user.getRoles().stream().map(UserRole::getRole).collect(Collectors.toList()));
-        permissions.put("visit", "1,3,4,5");//todo这是控制菜单的路径，有时间移动后台
+        _ResponsePermissions permissions = new _ResponsePermissions();
+        permissions.setRoles(_user.getRoles().stream().map(UserRole::getRole).collect(Collectors.toList()));
+        permissions.setVisit("1,3,4,5");//todo这是控制菜单的路径，有时间移动后台
 
         _responseUser.setPermissions(permissions);
         responseUserData.setUser(_responseUser);
@@ -288,7 +288,7 @@ class ResponseUserData {
 class _ResponseUser {
     private String id;
     private String username;
-    private Map<String, Object> permissions;
+    private _ResponsePermissions permissions;
 
     _ResponseUser() {
     }
@@ -309,11 +309,35 @@ class _ResponseUser {
         this.username = username;
     }
 
-    public Map<String, Object> getPermissions() {
+    public _ResponsePermissions getPermissions() {
         return permissions;
     }
 
-    void setPermissions(Map<String, Object> permissions) {
+    public void setPermissions(_ResponsePermissions permissions) {
         this.permissions = permissions;
+    }
+}
+
+class _ResponsePermissions {
+    private List<String> roles;
+    private String visit;
+
+    public _ResponsePermissions() {
+    }
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
+    public String getVisit() {
+        return visit;
+    }
+
+    public void setVisit(String visit) {
+        this.visit = visit;
     }
 }
