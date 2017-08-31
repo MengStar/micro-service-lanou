@@ -5,27 +5,38 @@ import meng.xing.entity.UserRole;
 import meng.xing.repository.UserRoleRepository;
 import meng.xing.service.UserRoleService;
 import meng.xing.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerInitializedEvent;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -39,6 +50,7 @@ public class ServiceUserApplication {
 @RefreshScope
 @Component
 class DatabaseLoader implements CommandLineRunner {
+    private final Logger logger = LoggerFactory.getLogger(DatabaseLoader.class);
 
     @Value("${developUser.username}")
     private String username;
@@ -47,9 +59,9 @@ class DatabaseLoader implements CommandLineRunner {
     @Value("${userRoleList}")
     private List<String> userRoleList;
 
-    final UserService userService;
-    final UserRoleRepository userRoleRepository;
-    final UserRoleService userRoleService;
+    private final UserService userService;
+    private final UserRoleRepository userRoleRepository;
+    private final UserRoleService userRoleService;
 
     @Autowired
     public DatabaseLoader(UserService userService, UserRoleRepository userRoleRepository, UserRoleService userRoleService) {
@@ -60,12 +72,14 @@ class DatabaseLoader implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
+        logger.info("初始化权限表...");
         //初始化权限表
         if (userRoleRepository.count() != 0)
             return;
         for (String anUserRoleList : userRoleList) {
             userRoleRepository.save(new UserRole(anUserRoleList));
         }
+        logger.info("新增开发用户...");
         //新增开发用户
         User testUser = new User(username, password, "萌萌", "13086695953", "6415@qq.com", "四川省 成都市 郫县", true, 18);
         List<String> roles = userRoleList;
@@ -74,6 +88,7 @@ class DatabaseLoader implements CommandLineRunner {
                 (role) -> _roles.add(userRoleService.findUserRoleByRole(role)));
         testUser.setRoles(_roles);
         userService.register(testUser);
+        logger.info("service-user微服务 api文档: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort() + "/swagger-ui.html");
     }
 
 }
@@ -96,10 +111,34 @@ class Swagger2 {
         return new ApiInfoBuilder()
                 .title("service-user APIs")
                 .description("service-user微服务api文档")
-                .termsOfServiceUrl("https://github.com/MengStar/micro-sevice-lanou/")
-                .contact("刘星")
+                .contact(new Contact("刘星", "https://github.com/MengStar", "641510128@qqq.com"))
                 .version("0.0.1-SNAPSHOT")
                 .build();
+    }
+
+
+}
+
+@Configuration
+class ServiceInfoUtil implements ApplicationListener<EmbeddedServletContainerInitializedEvent> {
+    private static EmbeddedServletContainerInitializedEvent event;
+
+    @Override
+    public void onApplicationEvent(EmbeddedServletContainerInitializedEvent event) {
+        ServiceInfoUtil.event = event;
+    }
+
+    static int getPort() {
+        return event.getEmbeddedServletContainer().getPort();
+    }
+
+    static String getHost() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

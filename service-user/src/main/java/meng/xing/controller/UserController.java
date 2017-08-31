@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * API文档地址： http://localhost:3000/swagger-ui.html
+ * API文档地址： http://localhost:2000/swagger-ui.html
  * 端口为该服务所在端口
  */
 @RefreshScope
@@ -89,6 +89,11 @@ public class UserController {
         responseUserData.setUser(_responseUser);
 
         return responseUserData;
+    }
+
+    @GetMapping("/{username}/password")
+    public String getPasswordbyUsername(@PathVariable("username") String username) {
+        return userService.findUserByUsername(username).getPassword();
     }
 
     @PatchMapping("/{id}")
@@ -248,14 +253,14 @@ class ResponseStatus {
     private String success;
     private String message;
 
-    public ResponseStatus() {
+    ResponseStatus() {
     }
 
     public String getSuccess() {
         return success;
     }
 
-    public void setSuccess(String success) {
+    void setSuccess(String success) {
         this.success = success;
     }
 
@@ -263,7 +268,7 @@ class ResponseStatus {
         return message;
     }
 
-    public void setMessage(String message) {
+    void setMessage(String message) {
         this.message = message;
     }
 }
@@ -271,7 +276,7 @@ class ResponseStatus {
 class ResponseUserData {
     private _ResponseUser user;
 
-    public ResponseUserData() {
+    ResponseUserData() {
     }
 
     public _ResponseUser getUser() {
@@ -311,7 +316,7 @@ class _ResponseUser {
         return permissions;
     }
 
-    public void setPermissions(_ResponsePermissions permissions) {
+     void setPermissions(_ResponsePermissions permissions) {
         this.permissions = permissions;
     }
 }
@@ -320,14 +325,14 @@ class _ResponsePermissions {
     private List<String> roles;
     private String visit;
 
-    public _ResponsePermissions() {
+     _ResponsePermissions() {
     }
 
     public List<String> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<String> roles) {
+     void setRoles(List<String> roles) {
         this.roles = roles;
     }
 
@@ -335,7 +340,7 @@ class _ResponsePermissions {
         return visit;
     }
 
-    public void setVisit(String visit) {
+     void setVisit(String visit) {
         this.visit = visit;
     }
 }
