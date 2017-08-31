@@ -1,9 +1,9 @@
-package main.java.meng.xing.tokenUtil;
+package meng.xing.tokenUtil;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import main.java.meng.xing.servie.UserService;
+import meng.xing.servie.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -25,16 +25,20 @@ import java.util.Map;
  */
 @Component
 public class JwtTokenUtil {
-    private static final String CLAIM_KEY_USERNAME = ""; //用户名
-    private static final String CLAIM_KEY_CREATED = "";//创建时间
+    private static final String CLAIM_KEY_USERNAME = "a"; //用户名key
+    private static final String CLAIM_KEY_CREATED = "b";//创建时间key
     @Value("${jwt.tokenPrefix}")
     private String tokenPrefix;
     @Value("${jwt.expiration}")
     private Long expiration;
     @Value("${jwt.secret}")
     private String secret;
+    private final UserService userService;
+
     @Autowired
-    UserService userService;
+    public JwtTokenUtil(UserService userService) {
+        this.userService = userService;
+    }
 
     public Date getCreatedDateFromToken(String token) {
         token = subTokenHead(token);

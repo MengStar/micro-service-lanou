@@ -12,4 +12,7 @@ zuul:
   routes:
     service-user:
       path: /user/**
-      servie-id: service-user
+      service-id: service-user
+    service-token:
+      path: /token/**
+      service-id: service-token

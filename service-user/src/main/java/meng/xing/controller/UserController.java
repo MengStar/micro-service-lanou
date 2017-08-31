@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  */
 @RefreshScope
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/")
 public class UserController {
     private final UserService userService;
     private final UserRoleService userRoleService;
@@ -147,6 +147,11 @@ public class UserController {
     @DeleteMapping
     public void deleteUsers(@RequestBody RequestIds ids) {
         ids.getIds().forEach(userService::deleteUserById);
+    }
+
+    @GetMapping("userRoles")
+    public List<UserRole> getUserRoles() {
+        return userRoleService.findALlRoles();
     }
 }
 
