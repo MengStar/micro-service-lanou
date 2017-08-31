@@ -4,6 +4,7 @@ import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -11,6 +12,8 @@ import java.util.*;
 public class AccessFilter extends ZuulFilter {
 
     private static Logger log = LoggerFactory.getLogger(AccessFilter.class);
+    @Autowired
+    private UserService userService;
 
     @Override
     public String filterType() {
@@ -28,6 +31,7 @@ public class AccessFilter extends ZuulFilter {
     }
 
     @Override
+    //todo :权限认证
     public Object run() {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
@@ -49,7 +53,6 @@ public class AccessFilter extends ZuulFilter {
         }
         queryParams.put("accessToken", Collections.singletonList("11111111111"));
         ctx.setRequestQueryParams(queryParams);
-        log.info("access token ok");
         return null;
     }
 }

@@ -1,0 +1,4 @@
+jwt:
+  tokenPrefix: liuxing-
+  expiration: 604800
+  secret: xinanjiaoda

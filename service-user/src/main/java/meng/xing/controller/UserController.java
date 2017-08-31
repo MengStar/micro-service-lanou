@@ -92,8 +92,13 @@ public class UserController {
     }
 
     @GetMapping("/{username}/password")
-    public String getPasswordbyUsername(@PathVariable("username") String username) {
+    public String getPasswordByUsername(@PathVariable("username") String username) {
         return userService.findUserByUsername(username).getPassword();
+    }
+
+    @RequestMapping(value = "/{username}/lastPasswordResetDate", method = RequestMethod.GET)
+    public Date getLastPasswordResetByUsername(@PathVariable("username") String username) {
+        return userService.findUserByUsername(username).getLastPasswordResetDate();
     }
 
     @PatchMapping("/{id}")
@@ -316,7 +321,7 @@ class _ResponseUser {
         return permissions;
     }
 
-     void setPermissions(_ResponsePermissions permissions) {
+    void setPermissions(_ResponsePermissions permissions) {
         this.permissions = permissions;
     }
 }
@@ -325,14 +330,14 @@ class _ResponsePermissions {
     private List<String> roles;
     private String visit;
 
-     _ResponsePermissions() {
+    _ResponsePermissions() {
     }
 
     public List<String> getRoles() {
         return roles;
     }
 
-     void setRoles(List<String> roles) {
+    void setRoles(List<String> roles) {
         this.roles = roles;
     }
 
@@ -340,7 +345,7 @@ class _ResponsePermissions {
         return visit;
     }
 
-     void setVisit(String visit) {
+    void setVisit(String visit) {
         this.visit = visit;
     }
 }
