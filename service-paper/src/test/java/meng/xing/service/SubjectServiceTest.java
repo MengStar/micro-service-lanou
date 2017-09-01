@@ -1,5 +1,6 @@
 package meng.xing.service;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,12 @@ public class SubjectServiceTest {
     SubjectService subjectService;
     @Test
     public void findAllSubjects() throws Exception {
-        System.out.println(subjectService.findAllSubjects());
+        Assert.assertNotNull(subjectService.findAllSubjects());
     }
 
     @Test
     public void findSubjectByType() throws Exception {
+        Assert.assertNotNull(subjectService.findSubjectByType("JAVA"));
     }
 
 }
