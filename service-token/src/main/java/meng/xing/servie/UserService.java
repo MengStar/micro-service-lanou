@@ -12,10 +12,10 @@ import java.util.Date;
 @FeignClient(name = "service-user", fallback = UserServiceFallback.class)
 public interface UserService {
 
-    @RequestMapping(value = "/{username}/lastPasswordResetDate", method = RequestMethod.GET)
+    @RequestMapping(value = "/users/{username}/lastPasswordResetDate", method = RequestMethod.GET)
     Date getLastPasswordResetByUsername(@PathVariable("username") String username);
 
-    @RequestMapping(value = "/{username}/password", method = RequestMethod.GET)
+    @RequestMapping(value = "/users/{username}/password", method = RequestMethod.GET)
     String getCorrectPasswordByUsername(@PathVariable("username") String username);
 
 }

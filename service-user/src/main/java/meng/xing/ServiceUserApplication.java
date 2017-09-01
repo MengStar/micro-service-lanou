@@ -30,8 +30,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -54,10 +54,10 @@ class DatabaseLoader implements CommandLineRunner {
     @Value("${developUser.password}")
     private String password;
     @Value("${userRoleList}")
-    private List<String> userRoleList;
+    private String[] userRoleList;
 
     @Value("${defaultUserRole}")
-    private List<String> defaultUserRole;
+    private String[] defaultUserRole;
 
     private final UserService userService;
     private final UserRoleRepository userRoleRepository;
@@ -72,7 +72,8 @@ class DatabaseLoader implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        logger.info("初始化权限表...新增权限如下：");userRoleList.forEach(role-> System.out.println(role+"|"));
+        logger.info("初始化权限表...新增权限如下：");
+        Arrays.asList(userRoleList).forEach(System.out::println);
         //初始化权限表
         if (userRoleRepository.count() != 0)
             return;
@@ -83,9 +84,9 @@ class DatabaseLoader implements CommandLineRunner {
         //新增开发用户
         User testUser = new User(username, password, "萌萌", "13086695953", "64151@qq.com", "四川省 成都市 郫县", true, 18);
         Set<UserRole> _roles = new HashSet<>();
-
-        defaultUserRole.forEach(
-                (role) -> _roles.add(userRoleService.findUserRoleByRole(role)));
+        for (String role : userRoleList) {
+            _roles.add(userRoleService.findUserRoleByRole(role));
+        }
         testUser.setRoles(_roles);
         userService.register(testUser);
 

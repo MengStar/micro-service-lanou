@@ -1,7 +1,1 @@
-subjectList:
-    - JAVA
-    - WEB
-    - C++
-    - PHP
-    - Mysql
-    - Scala
+subjectList: JAVA,WEB,C++,PHP,Mysql,Scala

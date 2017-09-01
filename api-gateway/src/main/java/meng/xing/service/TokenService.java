@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.*;
 @Primary
 @FeignClient(name = "service-token", fallback = TokenServiceFallback.class)
 public interface TokenService {
-    @RequestMapping(value = "/getToken", method = RequestMethod.GET)
+    @RequestMapping(value = "/token/getToken", method = RequestMethod.GET)
     String getToken(@RequestParam("username") String username, @RequestParam("password") String password);
 
-    @RequestMapping(value = "/getUsername", method = RequestMethod.GET)
+    @RequestMapping(value = "/token/getUsername", method = RequestMethod.GET)
     String getUsernameFromToken(@RequestParam("token") String token);
 }
 
