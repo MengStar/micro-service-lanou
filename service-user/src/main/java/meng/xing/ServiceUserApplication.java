@@ -56,6 +56,9 @@ class DatabaseLoader implements CommandLineRunner {
     @Value("${userRoleList}")
     private List<String> userRoleList;
 
+    @Value("${defaultUserRole}")
+    private List<String> defaultUserRole;
+
     private final UserService userService;
     private final UserRoleRepository userRoleRepository;
     private final UserRoleService userRoleService;
@@ -70,6 +73,7 @@ class DatabaseLoader implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
         logger.info("初始化权限表...");
+        userRoleList.forEach(System.out::println);
         //初始化权限表
         if (userRoleRepository.count() != 0)
             return;
@@ -78,13 +82,15 @@ class DatabaseLoader implements CommandLineRunner {
         }
         logger.info("新增开发用户...");
         //新增开发用户
-        User testUser = new User(username, password, "萌萌", "13086695953", "6415@qq.com", "四川省 成都市 郫县", true, 18);
+        User testUser = new User(username, password, "萌萌", "13086695953", "64151@qq.com", "四川省 成都市 郫县", true, 18);
 
         Set<UserRole> _roles = new HashSet<>();
-        userRoleList.forEach(
+
+        defaultUserRole.forEach(
                 (role) -> _roles.add(userRoleService.findUserRoleByRole(role)));
         testUser.setRoles(_roles);
         userService.register(testUser);
+
         logger.info("service-user微服务 api文档: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort() + "/swagger-ui.html");
     }
 
