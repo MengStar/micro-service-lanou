@@ -40,7 +40,7 @@ public class PaperController {
                                     @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                     @RequestParam(value = "sort", defaultValue = "id") String sort,
                                     @RequestParam(value = "order", defaultValue = "asc") String order,
-                                    @RequestParam(value = "subject", defaultValue = "") String subject) {
+                                    @RequestParam(value = "subject", required = false) String subject) {
         Subject subjectObj = null;
         if (subject != "") {
             subjectObj = subjectService.findSubjectByType(subject);

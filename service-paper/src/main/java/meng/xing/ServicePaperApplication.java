@@ -39,6 +39,7 @@ import java.util.*;
 
 @SpringBootApplication
 @EnableDiscoveryClient
+
 public class ServicePaperApplication {
 
     public static void main(String[] args) {
@@ -53,7 +54,6 @@ class DatabaseLoader implements CommandLineRunner {
 
     @Value("${subjectList}")
     private List<String> subjectList;
-
 
     private final
     SubjectRepository subjectRepository;
@@ -71,6 +71,7 @@ class DatabaseLoader implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
+
         logger.info("初始化类别表...");
         initSubject();//初始化类别表
 
@@ -86,10 +87,10 @@ class DatabaseLoader implements CommandLineRunner {
     private void initSubject() {
         if (subjectRepository.count() != 0)
             return;
-        for (String subject : subjectList) {
-            subjectRepository.save(new Subject(subject));
-        }
+        subjectList.forEach(subject -> subjectRepository.save(new Subject(subject)));
+
     }
+
 
     private void initTestItem() {
         Map<String, String> items = new HashMap<>();
@@ -138,8 +139,8 @@ class Swagger2 {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("service-user APIs")
-                .description("service-user微服务api文档")
+                .title("service-paper APIs")
+                .description("service-paper微服务api文档")
                 .contact(new Contact("刘星", "https://github.com/MengStar", "641510128@qqq.com"))
                 .version("0.0.1-SNAPSHOT")
                 .build();
