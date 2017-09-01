@@ -140,8 +140,20 @@ public class UserController {
     }
 
     @DeleteMapping
-    public void deleteUsers(@RequestBody RequestIds ids) {
-        ids.getIds().forEach(userService::deleteUserById);
+    public ResponseStatus deleteUsers(@RequestBody RequestIds ids) {
+
+        List<Long> _ids = ids.getIds();
+        ResponseStatus responseStatus = new ResponseStatus();
+        try {
+            _ids.forEach(userService::deleteUserById);
+            responseStatus.setMessage("批量删除用户成功!ids:" + _ids);
+            responseStatus.setSuccess("true");
+            return responseStatus;
+        } catch (Exception e) {
+            responseStatus.setMessage("批量删除用户失败!ids:" + _ids);
+            responseStatus.setSuccess("false");
+            return responseStatus;
+        }
     }
 
     @GetMapping("userRoles")
