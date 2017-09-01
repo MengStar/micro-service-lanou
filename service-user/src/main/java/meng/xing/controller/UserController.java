@@ -87,7 +87,6 @@ public class UserController {
 
         _responseUser.setPermissions(permissions);
         responseUserData.setUser(_responseUser);
-
         return responseUserData;
     }
 

@@ -70,30 +70,22 @@ class DatabaseLoader implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
         logger.info("初始化权限表...");
-        initRole();//初始化权限表
-
-        logger.info("新增开发用户...");
-        initUser();//新增开发用户
-
-        logger.info("service-user微服务 api文档: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort() + "/swagger-ui.html");
-    }
-
-    private void initRole() {
+        //初始化权限表
         if (userRoleRepository.count() != 0)
             return;
         for (String anUserRoleList : userRoleList) {
             userRoleRepository.save(new UserRole(anUserRoleList));
         }
-    }
-
-    private void initUser() {
+        logger.info("新增开发用户...");
+        //新增开发用户
         User testUser = new User(username, password, "萌萌", "13086695953", "6415@qq.com", "四川省 成都市 郫县", true, 18);
-        List<String> roles = userRoleList;
+
         Set<UserRole> _roles = new HashSet<>();
-        roles.forEach(
+        userRoleList.forEach(
                 (role) -> _roles.add(userRoleService.findUserRoleByRole(role)));
         testUser.setRoles(_roles);
         userService.register(testUser);
+        logger.info("service-user微服务 api文档: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort() + "/swagger-ui.html");
     }
 
 }
