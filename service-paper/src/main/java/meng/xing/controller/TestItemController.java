@@ -1,6 +1,8 @@
 package meng.xing.controller;
 
 import meng.xing.TestItemType;
+import meng.xing.controller.common.RequestIds;
+import meng.xing.controller.common.ResponseStatus;
 import meng.xing.entity.Subject;
 import meng.xing.entity.TestItem;
 import meng.xing.service.SubjectService;
@@ -12,8 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/testItems")
@@ -28,16 +30,16 @@ public class TestItemController {
     }
 
     @GetMapping
-    public Page<TestItem> getAllTestItems(
+    public Page<TestItem> getSomeTestItemsByType(
             @RequestParam(value = "type", defaultValue = "1") int type,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
             @RequestParam(value = "sort", defaultValue = "id") String sort,
             @RequestParam(value = "order", defaultValue = "asc") String order,
-            @RequestParam(value = "subject", defaultValue = "") String subject
+            @RequestParam(value = "subject", required = false) String subject
     ) {
         Subject subjectObj = null;
-        if (subject != "") {
+        if (!Objects.equals(subject, "")) {
             subjectObj = subjectService.findSubjectByType(subject);
         }
         String typeStr;
@@ -54,33 +56,111 @@ public class TestItemController {
     }
 
     @PatchMapping("/{id}")
-    public boolean update(@PathVariable("id") Long id, @RequestBody Map<String, Object> map) {
+    public ResponseStatus updateTestItem(@PathVariable("id") Long id, @RequestBody RequestTestItem requestTestItem) {
+        ResponseStatus responseStatus = new ResponseStatus();
         TestItem testItem = testItemService.findTestItemById(id);
-        testItem.setAnswer(map.get("answer").toString());
-        testItem.setQuestion(map.get("question").toString());
-        testItem.setSubject(subjectService.findSubjectByType(map.get("subject").toString()));
-        return testItemService.updateTestItem(testItem);
+        testItem.setAnswer(requestTestItem.getAnswer());
+        testItem.setQuestion(requestTestItem.getQuestion());
+        testItem.setSubject(subjectService.findSubjectByType(requestTestItem.getSubject()));
+        if (testItemService.updateTestItem(testItem)) {
+            responseStatus.setMessage("修改试题成功");
+            responseStatus.setSuccess("true");
+            return responseStatus;
+        }
+        responseStatus.setMessage("修改试题失败");
+        responseStatus.setSuccess("false");
+        return responseStatus;
     }
 
     @PostMapping
-    public boolean create(@RequestBody Map<String, Object> map) {
+    public ResponseStatus createTestItem(@RequestBody RequestTestItem requestTestItem) {
+        ResponseStatus responseStatus = new ResponseStatus();
         TestItem testItem = new TestItem(
-                map.get("type").toString(),
-                map.get("question").toString(),
-                map.get("answer").toString());
-        testItem.setSubject(subjectService.findSubjectByType(map.get("subject").toString()));
-        return testItemService.addTestItme(testItem);
+                requestTestItem.getType(),
+                requestTestItem.getQuestion(),
+                requestTestItem.getAnswer());
+        testItem.setSubject(subjectService.findSubjectByType(requestTestItem.getSubject()));
+        if (testItemService.addTestItme(testItem)) {
+            responseStatus.setMessage("新增试题成功");
+            responseStatus.setSuccess("true");
+            return responseStatus;
+        }
+        responseStatus.setMessage("新增试题失败");
+        responseStatus.setSuccess("false");
+        return responseStatus;
     }
 
     @DeleteMapping("/{id}")
-    public boolean delete(@PathVariable("id") Long id) {
-        return testItemService.deleteTestItemById(id);
+    public ResponseStatus deleteTestItemById(@PathVariable("id") Long id) {
+
+        ResponseStatus responseStatus = new ResponseStatus();
+        if (testItemService.deleteTestItemById(id)) {
+            responseStatus.setMessage("删除试题成功!id:" + id);
+            responseStatus.setSuccess("true");
+            return responseStatus;
+        }
+        responseStatus.setMessage("删除试题失败!id:" + id);
+        responseStatus.setSuccess("false");
+        return responseStatus;
     }
 
     @DeleteMapping
-    public void delete(@RequestBody Map<String, ArrayList<Long>> map) {
-        map.get("ids").forEach(testItemService::deleteTestItemById);
+    public ResponseStatus deleteTestItem(@RequestBody RequestIds ids) {
+
+        List<Long> _ids = ids.getIds();
+        ResponseStatus responseStatus = new ResponseStatus();
+        try {
+            _ids.forEach(testItemService::deleteTestItemById);
+            responseStatus.setMessage("批量删除试题成功!ids:" + _ids);
+            responseStatus.setSuccess("true");
+            return responseStatus;
+        } catch (Exception e) {
+            responseStatus.setMessage("批量删除试题失败!ids:" + _ids);
+            responseStatus.setSuccess("false");
+            return responseStatus;
+        }
     }
 
 }
 
+class RequestTestItem {
+    private String type;
+    private String question;
+    private String answer;
+    private String subject;
+
+    public RequestTestItem() {
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+}

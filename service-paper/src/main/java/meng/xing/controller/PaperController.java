@@ -1,5 +1,7 @@
 package meng.xing.controller;
 
+import meng.xing.controller.common.RequestIds;
+import meng.xing.controller.common.ResponseStatus;
 import meng.xing.entity.Paper;
 import meng.xing.entity.Subject;
 import meng.xing.entity.TestItem;
@@ -140,21 +142,6 @@ public class PaperController {
     }
 }
 
-class RequestIds {
-    private List<Long> ids;
-
-    public RequestIds() {
-    }
-
-    List<Long> getIds() {
-        return ids;
-    }
-
-    public void setIds(List<Long> ids) {
-        this.ids = ids;
-    }
-}
-
 class RequestPaper {
     private String subject;
     private String description;
@@ -185,30 +172,6 @@ class RequestPaper {
 
     public void setTestItemIds(List<Long> testItemIds) {
         this.testItemIds = testItemIds;
-    }
-}
-
-class ResponseStatus {
-    private String success;
-    private String message;
-
-    ResponseStatus() {
-    }
-
-    public String getSuccess() {
-        return success;
-    }
-
-    void setSuccess(String success) {
-        this.success = success;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    void setMessage(String message) {
-        this.message = message;
     }
 }
 

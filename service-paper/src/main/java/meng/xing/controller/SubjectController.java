@@ -21,7 +21,7 @@ public class SubjectController {
     }
 
     @GetMapping
-    public List<Subject> findAll(){
+    public List<Subject> getAllSubjects() {
         return subjectService.findAllSubjects();
     }
 }
