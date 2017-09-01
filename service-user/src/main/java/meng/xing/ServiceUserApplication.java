@@ -27,6 +27,7 @@ import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashSet;
@@ -69,14 +70,23 @@ class DatabaseLoader implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
         logger.info("初始化权限表...");
-        //初始化权限表
+        initRole();//初始化权限表
+
+        logger.info("新增开发用户...");
+        initUser();//新增开发用户
+
+        logger.info("service-user微服务 api文档: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort() + "/swagger-ui.html");
+    }
+
+    private void initRole() {
         if (userRoleRepository.count() != 0)
             return;
         for (String anUserRoleList : userRoleList) {
             userRoleRepository.save(new UserRole(anUserRoleList));
         }
-        logger.info("新增开发用户...");
-        //新增开发用户
+    }
+
+    private void initUser() {
         User testUser = new User(username, password, "萌萌", "13086695953", "6415@qq.com", "四川省 成都市 郫县", true, 18);
         List<String> roles = userRoleList;
         Set<UserRole> _roles = new HashSet<>();
@@ -84,7 +94,6 @@ class DatabaseLoader implements CommandLineRunner {
                 (role) -> _roles.add(userRoleService.findUserRoleByRole(role)));
         testUser.setRoles(_roles);
         userService.register(testUser);
-        logger.info("service-user微服务 api文档: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort() + "/swagger-ui.html");
     }
 
 }
