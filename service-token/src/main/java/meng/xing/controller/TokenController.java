@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/")
 public class TokenController {
-    private final TokenService tokenService;
+    private final
+    TokenService tokenService;
     private final
     UserService userService;
 

@@ -22,10 +22,11 @@ import java.util.stream.Collectors;
  */
 @RefreshScope
 @RestController
-@RequestMapping("/")
+@RequestMapping
 public class UserController {
     private final UserService userService;
     private final UserRoleService userRoleService;
+
     @Value("${defaultUserRole}")
     private List<String> defaultUserRole;
 
@@ -74,20 +75,21 @@ public class UserController {
 
     @GetMapping("/{username}")
     public ResponseUserData getUserByUsername(@PathVariable("username") String username) {
-        ResponseUserData responseUserData = new ResponseUserData();
-        _ResponseUser _responseUser = new _ResponseUser();
-        User _user = userService.findUserByUsername(username);
-
-        _responseUser.setId(_user.getId().toString());
-        _responseUser.setUsername(_user.getUsername());
-
-        _ResponsePermissions permissions = new _ResponsePermissions();
-        permissions.setRoles(_user.getRoles().stream().map(UserRole::getRole).collect(Collectors.toList()));
-        permissions.setVisit("1,3,4,5");//todo这是控制菜单的路径，有时间移动后台
-
-        _responseUser.setPermissions(permissions);
-        responseUserData.setUser(_responseUser);
-        return responseUserData;
+//        ResponseUserData responseUserData = new ResponseUserData();
+//        _ResponseUser _responseUser = new _ResponseUser();
+//        User _user = userService.findUserByUsername(username);
+//
+//        _responseUser.setId(_user.getId().toString());
+//        _responseUser.setUsername(_user.getUsername());
+//
+//        _ResponsePermissions permissions = new _ResponsePermissions();
+//        permissions.setRoles(_user.getRoles().stream().map(UserRole::getRole).collect(Collectors.toList()));
+//        permissions.setVisit("1,3,4,5");//todo这是控制菜单的路径，有时间移动后台
+//
+//        _responseUser.setPermissions(permissions);
+//        responseUserData.setUser(_responseUser);
+//        return responseUserData;
+        return null;
     }
 
     @GetMapping("/{username}/password")

@@ -72,8 +72,7 @@ class DatabaseLoader implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        logger.info("初始化权限表...");
-        userRoleList.forEach(System.out::println);
+        logger.info("初始化权限表...新增权限如下：");userRoleList.forEach(role-> System.out.println(role+"|"));
         //初始化权限表
         if (userRoleRepository.count() != 0)
             return;
@@ -83,7 +82,6 @@ class DatabaseLoader implements CommandLineRunner {
         logger.info("新增开发用户...");
         //新增开发用户
         User testUser = new User(username, password, "萌萌", "13086695953", "64151@qq.com", "四川省 成都市 郫县", true, 18);
-
         Set<UserRole> _roles = new HashSet<>();
 
         defaultUserRole.forEach(
