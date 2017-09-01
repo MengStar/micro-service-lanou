@@ -2,7 +2,7 @@ developUser:
   username: admin
   password: admin
 defaultUserRole:
-  - ROLE_DEFAULT
+  -ROLE_DEFAULT
 userRoleList:
   - ROLE_DEFAULT
   - ROLE_STUDENT
