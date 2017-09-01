@@ -1,4 +1,8 @@
 spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: true
   application:
     name: service-paper
   cloud:
@@ -17,3 +21,4 @@ eureka:
 
 server:
   port: 2400
+

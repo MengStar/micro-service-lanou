@@ -3,6 +3,7 @@ package meng.xing;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import meng.xing.entity.Paper;
 import meng.xing.entity.Subject;
 import meng.xing.entity.TestItem;
@@ -22,7 +23,10 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -53,7 +57,7 @@ class DatabaseLoader implements CommandLineRunner {
     private final Logger logger = LoggerFactory.getLogger(DatabaseLoader.class);
 
     @Value("${subjectList}")
-    private List<String> subjectList;
+    private String[] subjectList;
 
     private final
     SubjectRepository subjectRepository;
@@ -73,26 +77,14 @@ class DatabaseLoader implements CommandLineRunner {
     public void run(String... strings) throws Exception {
 
         logger.info("初始化类别表...");
-        initSubject();//初始化类别表
-
-        logger.info("初始化题库表...");
-        initTestItem(); //初始化题库表
-
-        logger.info("初始化试卷表...");
-        initPaper(); //初始化试卷表
-
-        logger.info("service-paper微服务 api文档: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort() + "/swagger-ui.html");
-    }
-
-    private void initSubject() {
         if (subjectRepository.count() != 0)
             return;
-        subjectList.forEach(subject -> subjectRepository.save(new Subject(subject)));
+        for (String subject : subjectList) {
+            System.out.println(subject);
+            subjectRepository.save(new Subject(subject));
+        }
 
-    }
-
-
-    private void initTestItem() {
+        logger.info("初始化题库表...");
         Map<String, String> items = new HashMap<>();
         items.put("A", "asda");
         items.put("B", "ds");
@@ -112,13 +104,14 @@ class DatabaseLoader implements CommandLineRunner {
         t2.setSubject(subjectRepository.findByType("WEB"));
         testItemRepository.save(t1);
         testItemRepository.save(t2);
-    }
 
-    private void initPaper() {
-        Set<TestItem> items = new HashSet<>();
-        items.addAll(testItemRepository.findAll());
+        logger.info("初始化试卷表...");
+        Set<TestItem> testItems = new HashSet<>();
+        testItems.addAll(testItemRepository.findAll());
         Subject subject = subjectRepository.findByType("JAVA");
-        paperRepository.save(new Paper("admin", "测试试卷", subject, items));
+        paperRepository.save(new Paper("admin", "测试试卷", subject, testItems));
+
+        logger.info("service-paper微服务 api文档: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort() + "/swagger-ui.html");
     }
 
 }
@@ -171,6 +164,34 @@ class ServiceInfoUtil implements ApplicationListener<EmbeddedServletContainerIni
         return null;
     }
 
+}
+
+/**
+ * 配置懒加载，否则会出现循环加载的错误
+ * 同时需要在 bootstrap 配置文件中配置spring.jpa.hibernate.open-in-view: true
+ */
+@Configuration
+class LazyLoadConfig extends WebMvcConfigurerAdapter {
+    public MappingJackson2HttpMessageConverter jacksonMessageConverter() {
+        MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        // Registering Hibernate4Module to support lazy objects
+        mapper.registerModule(new Hibernate4Module());
+
+        messageConverter.setObjectMapper(mapper);
+
+        return messageConverter;
+    }
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        // Add the custom-configured HttpMessageConverter
+        converters.add(jacksonMessageConverter());
+
+        super.configureMessageConverters(converters);
+    }
 }
 
 class ChoiceItem {

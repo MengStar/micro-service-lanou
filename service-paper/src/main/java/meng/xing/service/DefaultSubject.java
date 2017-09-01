@@ -19,13 +19,11 @@ public class DefaultSubject implements SubjectService {
     }
 
     @Override
-    @Cacheable(value = "AllSubject") //可以缓存
     public List<Subject> findAllSubjects() {
         return subjectRepository.findAll();
     }
 
     @Override
-    @Cacheable(value = "SubjectByType") //可以缓存
     public Subject findSubjectByType(String type) {
         return subjectRepository.findByType(type);
     }
