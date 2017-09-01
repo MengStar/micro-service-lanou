@@ -36,13 +36,13 @@ public class PaperController {
 
 
     @GetMapping
-    public Page<Paper> findAllPaper(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                                    @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                                    @RequestParam(value = "sort", defaultValue = "id") String sort,
-                                    @RequestParam(value = "order", defaultValue = "asc") String order,
-                                    @RequestParam(value = "subject", required = false) String subject) {
+    public Page<Paper> findSomePapers(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                      @RequestParam(value = "sort", defaultValue = "id") String sort,
+                                      @RequestParam(value = "order", defaultValue = "asc") String order,
+                                      @RequestParam(value = "subject", required = false) String subject) {
         Subject subjectObj = null;
-        if (subject != "") {
+        if (!Objects.equals(subject, "")) {
             subjectObj = subjectService.findSubjectByType(subject);
         }
 
@@ -53,12 +53,15 @@ public class PaperController {
     }
 
     @GetMapping("/{id}")
-    public Paper getPaperById(@PathVariable("id") Long id) {
-        return paperService.findPaperById(id);
+    public ResponsePaper getTestItemsByPaperId(@PathVariable("id") Long id) {
+        Paper paper = paperService.findPaperById(id);
+        ResponsePaper responsePaper = new ResponsePaper();
+        responsePaper.setTestItems(paper.getTestItems());
+        return responsePaper;
     }
 
     @PatchMapping("/{id}")
-    public ResponseStatus update(@PathVariable("id") Long id, @RequestBody RequestPaper requestPaper) {
+    public ResponseStatus updatePaper(@PathVariable("id") Long id, @RequestBody RequestPaper requestPaper) {
         Subject subject = subjectService.findSubjectByType(requestPaper.getSubject());
         String description = requestPaper.getDescription();
         Set<TestItem> testItems = new HashSet<>();
@@ -143,7 +146,7 @@ class RequestIds {
     public RequestIds() {
     }
 
-    public List<Long> getIds() {
+    List<Long> getIds() {
         return ids;
     }
 
@@ -168,7 +171,7 @@ class RequestPaper {
         this.subject = subject;
     }
 
-    public String getDescription() {
+    String getDescription() {
         return description;
     }
 
@@ -176,7 +179,7 @@ class RequestPaper {
         this.description = description;
     }
 
-    public List<Long> getTestItemIds() {
+    List<Long> getTestItemIds() {
         return testItemIds;
     }
 
@@ -189,14 +192,14 @@ class ResponseStatus {
     private String success;
     private String message;
 
-    public ResponseStatus() {
+    ResponseStatus() {
     }
 
     public String getSuccess() {
         return success;
     }
 
-    public void setSuccess(String success) {
+    void setSuccess(String success) {
         this.success = success;
     }
 
@@ -204,8 +207,23 @@ class ResponseStatus {
         return message;
     }
 
-    public void setMessage(String message) {
+    void setMessage(String message) {
         this.message = message;
     }
 }
 
+class ResponsePaper {
+
+    private Set<TestItem> testItems;
+
+    ResponsePaper() {
+    }
+
+    public Set<TestItem> getTestItems() {
+        return testItems;
+    }
+
+    void setTestItems(Set<TestItem> testItems) {
+        this.testItems = testItems;
+    }
+}
