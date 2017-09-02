@@ -22,3 +22,7 @@ eureka:
 
 server:
   port: 2100
+
+turbine:
+  combine-host-port: true
+  app-config: service-token
