@@ -125,38 +125,38 @@ public class ExamController {
             return responseStatusWithMessage;
         }
     }
-}
 
-class RequestExam {
-    private String subject;
-    private String description;
-    private Long paperId;
+    class RequestExam {
+        private String subject;
+        private String description;
+        private Long paperId;
 
-    public RequestExam() {
+        public RequestExam() {
 
-    }
+        }
 
-    public String getSubject() {
-        return subject;
-    }
+        public String getSubject() {
+            return subject;
+        }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
+        public void setSubject(String subject) {
+            this.subject = subject;
+        }
 
-    public String getDescription() {
-        return description;
-    }
+        public String getDescription() {
+            return description;
+        }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+        public void setDescription(String description) {
+            this.description = description;
+        }
 
-    public Long getPaperId() {
-        return paperId;
-    }
+        public Long getPaperId() {
+            return paperId;
+        }
 
-    public void setPaperId(Long paperId) {
-        this.paperId = paperId;
+        public void setPaperId(Long paperId) {
+            this.paperId = paperId;
+        }
     }
 }

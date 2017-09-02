@@ -160,189 +160,190 @@ public class UserController {
     public List<UserRole> getUserRoles() {
         return userRoleService.findALlRoles();
     }
+
+    class RequestUser {
+        private String username;
+        private String password;
+        private String nickName;
+        private String phone;
+        private String email;
+        private String address;
+        private boolean female;
+        private int age;
+        private List<String> roles;
+
+        public RequestUser() {
+
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public String getNickName() {
+            return nickName;
+        }
+
+        public void setNickName(String nickName) {
+            this.nickName = nickName;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+
+        public boolean isFemale() {
+            return female;
+        }
+
+        public void setFemale(boolean female) {
+            this.female = female;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+
+        public List<String> getRoles() {
+            return roles;
+        }
+
+        public void setRoles(List<String> roles) {
+            this.roles = roles;
+        }
+    }
+
+    class RequestIds {
+        private List<Long> ids;
+
+        public RequestIds() {
+        }
+
+        public List<Long> getIds() {
+            return ids;
+        }
+
+        public void setIds(List<Long> ids) {
+            this.ids = ids;
+        }
+    }
+
+    class ResponseStatus {
+        private String success;
+        private String message;
+
+        public ResponseStatus() {
+        }
+
+        public String getSuccess() {
+            return success;
+        }
+
+        public void setSuccess(String success) {
+            this.success = success;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
+
+
+    class ResponseUser {
+        private String id;
+        private String username;
+        private _ResponsePermissions permissions;
+
+        public ResponseUser() {
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public _ResponsePermissions getPermissions() {
+            return permissions;
+        }
+
+        public void setPermissions(_ResponsePermissions permissions) {
+            this.permissions = permissions;
+        }
+    }
+
+    class _ResponsePermissions {
+        private List<String> roles;
+        private String visit;
+
+        public _ResponsePermissions() {
+        }
+
+        public List<String> getRoles() {
+            return roles;
+        }
+
+        public void setRoles(List<String> roles) {
+            this.roles = roles;
+        }
+
+        public String getVisit() {
+            return visit;
+        }
+
+        public void setVisit(String visit) {
+            this.visit = visit;
+        }
+    }
 }
 
-class RequestUser {
-    private String username;
-    private String password;
-    private String nickName;
-    private String phone;
-    private String email;
-    private String address;
-    private boolean female;
-    private int age;
-    private List<String> roles;
-
-    public RequestUser() {
-
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public boolean isFemale() {
-        return female;
-    }
-
-    public void setFemale(boolean female) {
-        this.female = female;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public List<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
-    }
-}
-
-class RequestIds {
-    private List<Long> ids;
-
-    public RequestIds() {
-    }
-
-    public List<Long> getIds() {
-        return ids;
-    }
-
-    public void setIds(List<Long> ids) {
-        this.ids = ids;
-    }
-}
-
-class ResponseStatus {
-    private String success;
-    private String message;
-
-    public ResponseStatus() {
-    }
-
-    public String getSuccess() {
-        return success;
-    }
-
-    public void setSuccess(String success) {
-        this.success = success;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-}
-
-
-class ResponseUser {
-    private String id;
-    private String username;
-    private _ResponsePermissions permissions;
-
-    public ResponseUser() {
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public _ResponsePermissions getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(_ResponsePermissions permissions) {
-        this.permissions = permissions;
-    }
-}
-
-class _ResponsePermissions {
-    private List<String> roles;
-    private String visit;
-
-    public _ResponsePermissions() {
-    }
-
-    public List<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
-    }
-
-    public String getVisit() {
-        return visit;
-    }
-
-    public void setVisit(String visit) {
-        this.visit = visit;
-    }
-}

@@ -140,53 +140,54 @@ public class PaperController {
 
 
     }
-}
 
-class RequestPaper {
-    private String subject;
-    private String description;
-    private List<Long> testItemIds;
+    class RequestPaper {
+        private String subject;
+        private String description;
+        private List<Long> testItemIds;
 
-    public RequestPaper() {
+        public RequestPaper() {
+        }
+
+        public String getSubject() {
+            return subject;
+        }
+
+        public void setSubject(String subject) {
+            this.subject = subject;
+        }
+
+        String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        List<Long> getTestItemIds() {
+            return testItemIds;
+        }
+
+        public void setTestItemIds(List<Long> testItemIds) {
+            this.testItemIds = testItemIds;
+        }
     }
 
-    public String getSubject() {
-        return subject;
+    class ResponsePaper {
+
+        private Set<TestItem> testItems;
+
+        ResponsePaper() {
+        }
+
+        public Set<TestItem> getTestItems() {
+            return testItems;
+        }
+
+        void setTestItems(Set<TestItem> testItems) {
+            this.testItems = testItems;
+        }
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    List<Long> getTestItemIds() {
-        return testItemIds;
-    }
-
-    public void setTestItemIds(List<Long> testItemIds) {
-        this.testItemIds = testItemIds;
-    }
-}
-
-class ResponsePaper {
-
-    private Set<TestItem> testItems;
-
-    ResponsePaper() {
-    }
-
-    public Set<TestItem> getTestItems() {
-        return testItems;
-    }
-
-    void setTestItems(Set<TestItem> testItems) {
-        this.testItems = testItems;
-    }
 }

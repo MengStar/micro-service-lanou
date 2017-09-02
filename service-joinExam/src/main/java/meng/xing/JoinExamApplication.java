@@ -1,13 +1,11 @@
 package meng.xing;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerInitializedEvent;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,17 +23,15 @@ import java.net.UnknownHostException;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients
-@EnableSwagger2
-public class ServiceTokenApplication {
-    private static Logger logger = LoggerFactory.getLogger(ServiceTokenApplication.class);
-
+public class JoinExamApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ServiceTokenApplication.class, args);
-        logger.info("service-user微服务 api文档: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort() + "/swagger-ui.html");
+        final Logger logger = LoggerFactory.getLogger(JoinExamApplication.class);
+        SpringApplication.run(JoinExamApplication.class, args);
+        logger.info("service-joinExam微服务 api文档: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort() + "/swagger-ui.html");
     }
 
     @Configuration
+    @EnableSwagger2
     class Swagger2 {
 
         @Bean
@@ -50,13 +46,12 @@ public class ServiceTokenApplication {
 
         private ApiInfo apiInfo() {
             return new ApiInfoBuilder()
-                    .title("service-token APIs")
-                    .description("service-token微服务api文档")
+                    .title("service-joinExam APIs")
+                    .description("service-joinExam微服务api文档")
                     .contact(new Contact("刘星", "https://github.com/MengStar", "641510128@qqq.com"))
                     .version("0.0.1-SNAPSHOT")
                     .build();
         }
-
 
     }
 
@@ -70,7 +65,11 @@ public class ServiceTokenApplication {
         }
 
         static int getPort() {
-            return event.getEmbeddedServletContainer().getPort();
+            try {
+                return event.getEmbeddedServletContainer().getPort();
+            } catch (NullPointerException e) {
+                return -1;
+            }
         }
 
         static String getHost() {
@@ -83,6 +82,4 @@ public class ServiceTokenApplication {
         }
 
     }
-
-
 }

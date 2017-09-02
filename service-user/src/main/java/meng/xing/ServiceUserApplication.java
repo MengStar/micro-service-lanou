@@ -42,106 +42,107 @@ public class ServiceUserApplication {
     public static void main(String[] args) {
         SpringApplication.run(ServiceUserApplication.class, args);
     }
-}
 
-@RefreshScope
-@Component
-class DatabaseLoader implements CommandLineRunner {
-    private final Logger logger = LoggerFactory.getLogger(DatabaseLoader.class);
+    @RefreshScope
+    @Component
+    class DatabaseLoader implements CommandLineRunner {
+        private final Logger logger = LoggerFactory.getLogger(DatabaseLoader.class);
 
-    @Value("${developUser.username}")
-    private String username;
-    @Value("${developUser.password}")
-    private String password;
-    @Value("${userRoleList}")
-    private String[] userRoleList;
+        @Value("${developUser.username}")
+        private String username;
+        @Value("${developUser.password}")
+        private String password;
+        @Value("${userRoleList}")
+        private String[] userRoleList;
 
-    @Value("${defaultUserRole}")
-    private String[] defaultUserRole;
+        @Value("${defaultUserRole}")
+        private String[] defaultUserRole;
 
-    private final UserService userService;
-    private final UserRoleRepository userRoleRepository;
-    private final UserRoleService userRoleService;
+        private final UserService userService;
+        private final UserRoleRepository userRoleRepository;
+        private final UserRoleService userRoleService;
 
-    @Autowired
-    public DatabaseLoader(UserService userService, UserRoleRepository userRoleRepository, UserRoleService userRoleService) {
-        this.userService = userService;
-        this.userRoleRepository = userRoleRepository;
-        this.userRoleService = userRoleService;
-    }
-
-    @Override
-    public void run(String... strings) throws Exception {
-        logger.info("初始化权限表...新增权限如下：");
-        Arrays.asList(userRoleList).forEach(System.out::println);
-        //初始化权限表
-        if (userRoleRepository.count() != 0)
-            return;
-        for (String anUserRoleList : userRoleList) {
-            userRoleRepository.save(new UserRole(anUserRoleList));
+        @Autowired
+        public DatabaseLoader(UserService userService, UserRoleRepository userRoleRepository, UserRoleService userRoleService) {
+            this.userService = userService;
+            this.userRoleRepository = userRoleRepository;
+            this.userRoleService = userRoleService;
         }
-        logger.info("新增开发用户...");
-        //新增开发用户
-        User testUser = new User(username, password, "萌萌", "13086695953", "64151@qq.com", "四川省 成都市 郫县", true, 18);
-        Set<UserRole> _roles = new HashSet<>();
-        for (String role : userRoleList) {
-            _roles.add(userRoleService.findUserRoleByRole(role));
+
+        @Override
+        public void run(String... strings) throws Exception {
+            logger.info("初始化权限表...新增权限如下：");
+            Arrays.asList(userRoleList).forEach(System.out::println);
+            //初始化权限表
+            if (userRoleRepository.count() != 0)
+                return;
+            for (String anUserRoleList : userRoleList) {
+                userRoleRepository.save(new UserRole(anUserRoleList));
+            }
+            logger.info("新增开发用户...");
+            //新增开发用户
+            User testUser = new User(username, password, "萌萌", "13086695953", "64151@qq.com", "四川省 成都市 郫县", true, 18);
+            Set<UserRole> _roles = new HashSet<>();
+            for (String role : userRoleList) {
+                _roles.add(userRoleService.findUserRoleByRole(role));
+            }
+            testUser.setRoles(_roles);
+            userService.register(testUser);
+
+            logger.info("service-user微服务 api文档: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort() + "/swagger-ui.html");
         }
-        testUser.setRoles(_roles);
-        userService.register(testUser);
 
-        logger.info("service-user微服务 api文档: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort() + "/swagger-ui.html");
     }
 
-}
+    @Configuration
+    @EnableSwagger2
+    class Swagger2 {
 
-@Configuration
-@EnableSwagger2
-class Swagger2 {
-
-    @Bean
-    public Docket createRestApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiInfo())
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("meng.xing.controller"))
-                .paths(PathSelectors.any())
-                .build();
-    }
-
-    private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("service-user APIs")
-                .description("service-user微服务api文档")
-                .contact(new Contact("刘星", "https://github.com/MengStar", "641510128@qqq.com"))
-                .version("0.0.1-SNAPSHOT")
-                .build();
-    }
-
-
-}
-
-@Configuration
-class ServiceInfoUtil implements ApplicationListener<EmbeddedServletContainerInitializedEvent> {
-    private static EmbeddedServletContainerInitializedEvent event;
-
-    @Override
-    public void onApplicationEvent(EmbeddedServletContainerInitializedEvent event) {
-        ServiceInfoUtil.event = event;
-    }
-
-    static int getPort() {
-        return event.getEmbeddedServletContainer().getPort();
-    }
-
-    static String getHost() {
-        try {
-            return InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+        @Bean
+        public Docket createRestApi() {
+            return new Docket(DocumentationType.SWAGGER_2)
+                    .apiInfo(apiInfo())
+                    .select()
+                    .apis(RequestHandlerSelectors.basePackage("meng.xing.controller"))
+                    .paths(PathSelectors.any())
+                    .build();
         }
-        return null;
+
+        private ApiInfo apiInfo() {
+            return new ApiInfoBuilder()
+                    .title("service-user APIs")
+                    .description("service-user微服务api文档")
+                    .contact(new Contact("刘星", "https://github.com/MengStar", "641510128@qqq.com"))
+                    .version("0.0.1-SNAPSHOT")
+                    .build();
+        }
+
+
     }
 
-}
+    @Configuration
+    static class ServiceInfoUtil implements ApplicationListener<EmbeddedServletContainerInitializedEvent> {
+        private static EmbeddedServletContainerInitializedEvent event;
 
+        @Override
+        public void onApplicationEvent(EmbeddedServletContainerInitializedEvent event) {
+            ServiceInfoUtil.event = event;
+        }
+
+        static int getPort() {
+            return event.getEmbeddedServletContainer().getPort();
+        }
+
+        static String getHost() {
+            try {
+                return InetAddress.getLocalHost().getHostAddress();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+    }
+
+
+}

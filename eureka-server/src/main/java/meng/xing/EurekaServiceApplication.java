@@ -22,28 +22,28 @@ public class EurekaServiceApplication {
         SpringApplication.run(EurekaServiceApplication.class, args);
         logger.info("eureka-server服务 管理页面: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort());
     }
-}
 
-@Configuration
-class ServiceInfoUtil implements ApplicationListener<EmbeddedServletContainerInitializedEvent> {
-    private static EmbeddedServletContainerInitializedEvent event;
+    @Configuration
+    static class ServiceInfoUtil implements ApplicationListener<EmbeddedServletContainerInitializedEvent> {
+        private static EmbeddedServletContainerInitializedEvent event;
 
-    @Override
-    public void onApplicationEvent(EmbeddedServletContainerInitializedEvent event) {
-        ServiceInfoUtil.event = event;
-    }
-
-    static int getPort() {
-        return event.getEmbeddedServletContainer().getPort();
-    }
-
-    static String getHost() {
-        try {
-            return InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+        @Override
+        public void onApplicationEvent(EmbeddedServletContainerInitializedEvent event) {
+            ServiceInfoUtil.event = event;
         }
-        return null;
-    }
 
+        static int getPort() {
+            return event.getEmbeddedServletContainer().getPort();
+        }
+
+        static String getHost() {
+            try {
+                return InetAddress.getLocalHost().getHostAddress();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+    }
 }
