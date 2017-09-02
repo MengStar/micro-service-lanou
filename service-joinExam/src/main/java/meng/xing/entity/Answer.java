@@ -25,7 +25,6 @@ public class Answer {
     public Answer(String answer, String username, Long paperId, Long testItemId) {
         this.answer = answer;
         this.username = username;
-
         this.paperId = paperId;
         this.testItemId = testItemId;
     }
@@ -53,7 +52,6 @@ public class Answer {
     public void setUsername(String username) {
         this.username = username;
     }
-
 
     public Long getPaperId() {
         return paperId;

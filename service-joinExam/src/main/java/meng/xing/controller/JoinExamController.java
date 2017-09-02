@@ -50,7 +50,8 @@ public class JoinExamController {
     }
 
     @GetMapping("/getAnswer")
-    public List<Answer> getAnswerByUsernameAndPaperId(@PathParam("paperId") Long paperId, @PathParam("username") String username) {
+    public List<Answer> getAnswerByUsernameAndPaperId(@RequestParam("paperId") Long paperId, @RequestParam("username") String username) {
+        System.out.println(username + paperId);
         return answerService.findAnswerByUsernameAndPaperId(username, paperId);
     }
 

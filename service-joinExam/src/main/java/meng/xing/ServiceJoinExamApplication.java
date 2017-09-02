@@ -23,10 +23,10 @@ import java.net.UnknownHostException;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class JoinExamApplication {
+public class ServiceJoinExamApplication {
     public static void main(String[] args) {
-        final Logger logger = LoggerFactory.getLogger(JoinExamApplication.class);
-        SpringApplication.run(JoinExamApplication.class, args);
+        final Logger logger = LoggerFactory.getLogger(ServiceJoinExamApplication.class);
+        SpringApplication.run(ServiceJoinExamApplication.class, args);
         logger.info("service-joinExam微服务 api文档: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort() + "/swagger-ui.html");
     }
 
