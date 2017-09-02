@@ -4,9 +4,11 @@ package meng.xing;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+import meng.xing.entity.Exam;
 import meng.xing.entity.Paper;
 import meng.xing.entity.Subject;
 import meng.xing.entity.TestItem;
+import meng.xing.repository.ExamRepository;
 import meng.xing.repository.PaperRepository;
 import meng.xing.repository.SubjectRepository;
 import meng.xing.repository.TestItemRepository;
@@ -43,7 +45,6 @@ import java.util.*;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-
 public class ServicePaperApplication {
 
     public static void main(String[] args) {
@@ -65,12 +66,14 @@ class DatabaseLoader implements CommandLineRunner {
     PaperRepository paperRepository;
     private final
     TestItemRepository testItemRepository;
+    private final ExamRepository examRepository;
 
     @Autowired
-    public DatabaseLoader(SubjectRepository subjectRepository, PaperRepository paperRepository, TestItemRepository testItemRepository) {
+    public DatabaseLoader(SubjectRepository subjectRepository, PaperRepository paperRepository, TestItemRepository testItemRepository, ExamRepository examRepository) {
         this.subjectRepository = subjectRepository;
         this.paperRepository = paperRepository;
         this.testItemRepository = testItemRepository;
+        this.examRepository = examRepository;
     }
 
     @Override
@@ -110,6 +113,17 @@ class DatabaseLoader implements CommandLineRunner {
         testItems.addAll(testItemRepository.findAll());
         Subject subject = subjectRepository.findByType("JAVA");
         paperRepository.save(new Paper("admin", "测试试卷", subject, testItems));
+
+        logger.info("初始化考试表...");
+        Subject java = subjectRepository.findByType("JAVA");
+        Subject scala = subjectRepository.findByType("Scala");
+        Paper paper = paperRepository.findOne((long) 1);
+        for (int i = 0; i < 20; i++) {
+            examRepository.save(new Exam("这是一场测试考试" + i, java, paper, "admin"));
+        }
+        for (int i = 0; i < 20; i++) {
+            examRepository.save(new Exam("这是一场测试考试" + i, scala, paper, "admin"));
+        }
 
         logger.info("service-paper微服务 api文档: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort() + "/swagger-ui.html");
     }

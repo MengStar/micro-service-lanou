@@ -2,7 +2,7 @@ package meng.xing.controller;
 
 import meng.xing.TestItemType;
 import meng.xing.controller.common.RequestIds;
-import meng.xing.controller.common.ResponseStatus;
+import meng.xing.controller.common.ResponseStatusWithMessage;
 import meng.xing.entity.Subject;
 import meng.xing.entity.TestItem;
 import meng.xing.service.SubjectService;
@@ -56,68 +56,68 @@ public class TestItemController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseStatus updateTestItem(@PathVariable("id") Long id, @RequestBody RequestTestItem requestTestItem) {
-        ResponseStatus responseStatus = new ResponseStatus();
+    public ResponseStatusWithMessage updateTestItem(@PathVariable("id") Long id, @RequestBody RequestTestItem requestTestItem) {
+        ResponseStatusWithMessage responseStatusWithMessage = new ResponseStatusWithMessage();
         TestItem testItem = testItemService.findTestItemById(id);
         testItem.setAnswer(requestTestItem.getAnswer());
         testItem.setQuestion(requestTestItem.getQuestion());
         testItem.setSubject(subjectService.findSubjectByType(requestTestItem.getSubject()));
         if (testItemService.updateTestItem(testItem)) {
-            responseStatus.setMessage("修改试题成功");
-            responseStatus.setSuccess("true");
-            return responseStatus;
+            responseStatusWithMessage.setMessage("修改试题成功");
+            responseStatusWithMessage.setSuccess("true");
+            return responseStatusWithMessage;
         }
-        responseStatus.setMessage("修改试题失败");
-        responseStatus.setSuccess("false");
-        return responseStatus;
+        responseStatusWithMessage.setMessage("修改试题失败");
+        responseStatusWithMessage.setSuccess("false");
+        return responseStatusWithMessage;
     }
 
     @PostMapping
-    public ResponseStatus createTestItem(@RequestBody RequestTestItem requestTestItem) {
-        ResponseStatus responseStatus = new ResponseStatus();
+    public ResponseStatusWithMessage createTestItem(@RequestBody RequestTestItem requestTestItem) {
+        ResponseStatusWithMessage responseStatusWithMessage = new ResponseStatusWithMessage();
         TestItem testItem = new TestItem(
                 requestTestItem.getType(),
                 requestTestItem.getQuestion(),
                 requestTestItem.getAnswer());
         testItem.setSubject(subjectService.findSubjectByType(requestTestItem.getSubject()));
         if (testItemService.addTestItme(testItem)) {
-            responseStatus.setMessage("新增试题成功");
-            responseStatus.setSuccess("true");
-            return responseStatus;
+            responseStatusWithMessage.setMessage("新增试题成功");
+            responseStatusWithMessage.setSuccess("true");
+            return responseStatusWithMessage;
         }
-        responseStatus.setMessage("新增试题失败");
-        responseStatus.setSuccess("false");
-        return responseStatus;
+        responseStatusWithMessage.setMessage("新增试题失败");
+        responseStatusWithMessage.setSuccess("false");
+        return responseStatusWithMessage;
     }
 
     @DeleteMapping("/{id}")
-    public ResponseStatus deleteTestItemById(@PathVariable("id") Long id) {
+    public ResponseStatusWithMessage deleteTestItemById(@PathVariable("id") Long id) {
 
-        ResponseStatus responseStatus = new ResponseStatus();
+        ResponseStatusWithMessage responseStatusWithMessage = new ResponseStatusWithMessage();
         if (testItemService.deleteTestItemById(id)) {
-            responseStatus.setMessage("删除试题成功!id:" + id);
-            responseStatus.setSuccess("true");
-            return responseStatus;
+            responseStatusWithMessage.setMessage("删除试题成功!id:" + id);
+            responseStatusWithMessage.setSuccess("true");
+            return responseStatusWithMessage;
         }
-        responseStatus.setMessage("删除试题失败!id:" + id);
-        responseStatus.setSuccess("false");
-        return responseStatus;
+        responseStatusWithMessage.setMessage("删除试题失败!id:" + id);
+        responseStatusWithMessage.setSuccess("false");
+        return responseStatusWithMessage;
     }
 
     @DeleteMapping
-    public ResponseStatus deleteTestItem(@RequestBody RequestIds ids) {
+    public ResponseStatusWithMessage deleteTestItem(@RequestBody RequestIds ids) {
 
         List<Long> _ids = ids.getIds();
-        ResponseStatus responseStatus = new ResponseStatus();
+        ResponseStatusWithMessage responseStatusWithMessage = new ResponseStatusWithMessage();
         try {
             _ids.forEach(testItemService::deleteTestItemById);
-            responseStatus.setMessage("批量删除试题成功!ids:" + _ids);
-            responseStatus.setSuccess("true");
-            return responseStatus;
+            responseStatusWithMessage.setMessage("批量删除试题成功!ids:" + _ids);
+            responseStatusWithMessage.setSuccess("true");
+            return responseStatusWithMessage;
         } catch (Exception e) {
-            responseStatus.setMessage("批量删除试题失败!ids:" + _ids);
-            responseStatus.setSuccess("false");
-            return responseStatus;
+            responseStatusWithMessage.setMessage("批量删除试题失败!ids:" + _ids);
+            responseStatusWithMessage.setSuccess("false");
+            return responseStatusWithMessage;
         }
     }
 

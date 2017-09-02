@@ -1,7 +1,7 @@
 package meng.xing.controller;
 
 import meng.xing.controller.common.RequestIds;
-import meng.xing.controller.common.ResponseStatus;
+import meng.xing.controller.common.ResponseStatusWithMessage;
 import meng.xing.entity.Paper;
 import meng.xing.entity.Subject;
 import meng.xing.entity.TestItem;
@@ -63,7 +63,7 @@ public class PaperController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseStatus updatePaper(@PathVariable("id") Long id, @RequestBody RequestPaper requestPaper) {
+    public ResponseStatusWithMessage updatePaper(@PathVariable("id") Long id, @RequestBody RequestPaper requestPaper) {
         Subject subject = subjectService.findSubjectByType(requestPaper.getSubject());
         String description = requestPaper.getDescription();
         Set<TestItem> testItems = new HashSet<>();
@@ -75,20 +75,20 @@ public class PaperController {
         paper.setDescription(description);
         paper.setSubject(subject);
         paper.setTestItems(testItems);
-        ResponseStatus responseStatus = new ResponseStatus();
+        ResponseStatusWithMessage responseStatusWithMessage = new ResponseStatusWithMessage();
 
         if (paperService.updatePaper(paper)) {
-            responseStatus.setMessage("修改试卷成功");
-            responseStatus.setSuccess("true");
-            return responseStatus;
+            responseStatusWithMessage.setMessage("修改试卷成功");
+            responseStatusWithMessage.setSuccess("true");
+            return responseStatusWithMessage;
         }
-        responseStatus.setMessage("修改试卷失败");
-        responseStatus.setSuccess("false");
-        return responseStatus;
+        responseStatusWithMessage.setMessage("修改试卷失败");
+        responseStatusWithMessage.setSuccess("false");
+        return responseStatusWithMessage;
     }
 
     @PostMapping
-    public ResponseStatus createPaper(@RequestParam("username") String username, @RequestBody RequestPaper requestPaper) {
+    public ResponseStatusWithMessage createPaper(@RequestParam("username") String username, @RequestBody RequestPaper requestPaper) {
         Subject subject = subjectService.findSubjectByType(requestPaper.getSubject());
         String description = requestPaper.getDescription();
         Set<TestItem> testItems = new HashSet<>();
@@ -97,45 +97,45 @@ public class PaperController {
             requestPaper.getTestItemIds().forEach(testItemId -> testItems.add(testItemService.findTestItemById(testItemId)));
         }
         Paper paper = new Paper(username, description, subject, testItems);
-        ResponseStatus responseStatus = new ResponseStatus();
+        ResponseStatusWithMessage responseStatusWithMessage = new ResponseStatusWithMessage();
         if (paperService.addPaper(paper)) {
-            responseStatus.setMessage("新增试卷成功");
-            responseStatus.setSuccess("true");
-            return responseStatus;
+            responseStatusWithMessage.setMessage("新增试卷成功");
+            responseStatusWithMessage.setSuccess("true");
+            return responseStatusWithMessage;
         }
-        responseStatus.setMessage("新增试卷失败");
-        responseStatus.setSuccess("false");
-        return responseStatus;
+        responseStatusWithMessage.setMessage("新增试卷失败");
+        responseStatusWithMessage.setSuccess("false");
+        return responseStatusWithMessage;
 
     }
 
     @DeleteMapping("/{id}")
-    public ResponseStatus deleteOnePaper(@PathVariable("id") Long id) {
+    public ResponseStatusWithMessage deleteOnePaper(@PathVariable("id") Long id) {
 
-        ResponseStatus responseStatus = new ResponseStatus();
+        ResponseStatusWithMessage responseStatusWithMessage = new ResponseStatusWithMessage();
         if (paperService.deletePaperById(id)) {
-            responseStatus.setMessage("删除试卷成功!id:" + id);
-            responseStatus.setSuccess("true");
-            return responseStatus;
+            responseStatusWithMessage.setMessage("删除试卷成功!id:" + id);
+            responseStatusWithMessage.setSuccess("true");
+            return responseStatusWithMessage;
         }
-        responseStatus.setMessage("删除试卷失败!id:" + id);
-        responseStatus.setSuccess("false");
-        return responseStatus;
+        responseStatusWithMessage.setMessage("删除试卷失败!id:" + id);
+        responseStatusWithMessage.setSuccess("false");
+        return responseStatusWithMessage;
     }
 
     @DeleteMapping
-    public ResponseStatus deletePapers(@RequestBody RequestIds ids) {
+    public ResponseStatusWithMessage deletePapers(@RequestBody RequestIds ids) {
         List<Long> _ids = ids.getIds();
-        ResponseStatus responseStatus = new ResponseStatus();
+        ResponseStatusWithMessage responseStatusWithMessage = new ResponseStatusWithMessage();
         try {
             _ids.forEach(paperService::deletePaperById);
-            responseStatus.setMessage("批量删除试卷成功!ids:" + _ids);
-            responseStatus.setSuccess("true");
-            return responseStatus;
+            responseStatusWithMessage.setMessage("批量删除试卷成功!ids:" + _ids);
+            responseStatusWithMessage.setSuccess("true");
+            return responseStatusWithMessage;
         } catch (Exception e) {
-            responseStatus.setMessage("批量删除试卷失败!ids:" + _ids);
-            responseStatus.setSuccess("false");
-            return responseStatus;
+            responseStatusWithMessage.setMessage("批量删除试卷失败!ids:" + _ids);
+            responseStatusWithMessage.setSuccess("false");
+            return responseStatusWithMessage;
         }
 
 

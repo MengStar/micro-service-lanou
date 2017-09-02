@@ -1,10 +1,10 @@
 package meng.xing.controller.common;
 
-public class ResponseStatus {
+public class ResponseStatusWithMessage {
     private String success;
     private String message;
 
-    public ResponseStatus() {
+    public ResponseStatusWithMessage() {
     }
 
     public String getSuccess() {
