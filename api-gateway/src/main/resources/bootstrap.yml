@@ -1,6 +1,12 @@
 spring:
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: springcloud
+    password: sw2011prj
   application:
     name: api-gateway
+
 server:
   port: 1200
 
@@ -17,3 +23,4 @@ zuul:
     service-token:
       path: /token/**
       service-id: service-token
+

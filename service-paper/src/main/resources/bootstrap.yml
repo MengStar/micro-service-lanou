@@ -13,6 +13,11 @@ spring:
         enabled: true
         service-id: config-server
       fail-fast: true
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: springcloud
+    password: sw2011prj
 
 eureka:
   client:
@@ -21,4 +26,3 @@ eureka:
 
 server:
   port: 2400
-

@@ -1,4 +1,9 @@
 spring:
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: springcloud
+    password: sw2011prj
   application:
     name: config-server
   cloud:
