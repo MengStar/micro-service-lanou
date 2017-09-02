@@ -1,6 +1,6 @@
 spring:
   application:
-    name: hystrix-dashboard
+    name: turbine
 
 eureka:
   client:
@@ -8,4 +8,8 @@ eureka:
       defaultZone: http://peer1:1001/eureka/,http://peer2:1002/eureka/,http://peer3:1003/eureka/
 
 server:
-  port: 1300
+  port: 1400
+turbine:
+  app-config: service-token
+  cluster-name-expression: new String("default")
+  combine-host-port: true
