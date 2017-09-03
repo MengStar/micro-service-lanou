@@ -23,4 +23,6 @@ zuul:
     service-token:
       path: /token/**
       service-id: service-token
-
+feign:
+  hystrix:
+    enabled: true
