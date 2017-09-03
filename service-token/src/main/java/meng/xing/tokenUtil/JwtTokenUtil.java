@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import meng.xing.servie.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -25,6 +27,7 @@ import java.util.Map;
  */
 @Component
 public class JwtTokenUtil {
+    private Logger logger = LoggerFactory.getLogger(JwtTokenUtil.class);
     private static final String CLAIM_KEY_USERNAME = "a"; //用户名key
     private static final String CLAIM_KEY_CREATED = "b";//创建时间key
     @Value("${jwt.tokenPrefix}")
@@ -100,7 +103,9 @@ public class JwtTokenUtil {
 
         final String username = getUsernameFromToken(token);
         final Date created = getCreatedDateFromToken(token);
+
         final Date lastPasswordResetDate = userService.getLastPasswordResetByUsername(username);
+        logger.info("获取用户" + username + "最后修改密码的时间" + lastPasswordResetDate);
         return
                 username != null
                         && !isTokenExpired(token)
