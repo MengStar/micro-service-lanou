@@ -1,6 +1,6 @@
 # micro-sevice-lanou
 
-使用微服务架构重构单体后台[项目地址](http://dockone.io/article/394)
+使用微服务架构重构单体后台[项目地址](https://github.com/MengStar/BMS-BE)
 
  ## 特性
  
