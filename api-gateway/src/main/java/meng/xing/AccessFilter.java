@@ -16,7 +16,6 @@ public class AccessFilter extends ZuulFilter {
     private static Logger log = LoggerFactory.getLogger(AccessFilter.class);
 
     @Autowired
-
     private TokenService tokenService;
 
     @Override
