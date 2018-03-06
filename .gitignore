@@ -1,6 +1,4 @@
 
 .idea/
-eureka-client/eureka-client.iml
-eureka-client/target/
-eureka-service/eureka-service.iml
-spring-cloud-demo.iml
+/micro-service-lanou.iml
+
