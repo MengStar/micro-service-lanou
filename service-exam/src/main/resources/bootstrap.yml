@@ -5,7 +5,7 @@ spring:
     username: springcloud
     password: sw2011prj
   application:
-    name: service-token
+    name: service-joinExam
   cloud:
     config:
       label: master
@@ -21,8 +21,4 @@ eureka:
       defaultZone: http://peer1:8001/eureka/,http://peer2:8002/eureka/,http://peer3:8003/eureka/
 
 server:
-  port: 2100
-
-feign:
-  hystrix:
-    enabled: true
+  port: 2300
