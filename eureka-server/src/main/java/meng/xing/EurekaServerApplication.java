@@ -15,11 +15,11 @@ import java.net.UnknownHostException;
 
 @EnableEurekaServer
 @SpringBootApplication
-public class EurekaServiceApplication {
-    private final static Logger logger = LoggerFactory.getLogger(EurekaServiceApplication.class);
+public class EurekaServerApplication {
+    private final static Logger logger = LoggerFactory.getLogger(EurekaServerApplication.class);
 
     public static void main(String[] args) {
-        SpringApplication.run(EurekaServiceApplication.class, args);
+        SpringApplication.run(EurekaServerApplication.class, args);
         logger.info("eureka-server服务 管理页面: " + "http://" + ServiceInfoUtil.getHost() + ":" + ServiceInfoUtil.getPort());
     }
 

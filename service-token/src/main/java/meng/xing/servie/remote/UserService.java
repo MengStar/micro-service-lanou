@@ -1,4 +1,4 @@
-package meng.xing.servie;
+package meng.xing.servie.remote;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.context.annotation.Primary;

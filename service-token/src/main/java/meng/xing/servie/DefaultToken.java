@@ -1,5 +1,6 @@
 package meng.xing.servie;
 
+import meng.xing.servie.remote.UserService;
 import meng.xing.tokenUtil.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
